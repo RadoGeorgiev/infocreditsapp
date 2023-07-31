@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,6 +22,20 @@ class HomeController extends Controller
     {
         $credits_table = self::getCredits();
         $active = [];
+
+        if (empty($credits_table) || count(json_decode($credits_table, true)) == 0) {
+            // no entries - send dummy data for better visual
+            $credits_table = json_encode([[
+                'ID' => "...",
+                'credited_user' => "...",
+                'remaining_amount' => "...",
+                'terms' => "...",
+                'mounthly_payment' => "...",
+            ]]);
+            $arr = [];
+            Storage::put('all_credits.json', json_encode($arr));
+		    return view('home', ['credits_table' => $credits_table, 'dropdown_active' => $active]);
+        }
 
         $credits = json_decode(self::getCredits(), true);
         foreach($credits as $credit){
@@ -91,7 +106,7 @@ class HomeController extends Controller
         if ($is_valid) {
             echo 'New entry saved!';
         } else {
-            echo 'New entry NOT saved! Invalid data entered!';
+            echo 'New entry NOT saved! Invalid data entered(check user limit, terms, total amount)';
         }
     }
 
