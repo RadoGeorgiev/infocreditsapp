@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/home', 'App\Http\Controllers\HomeController@index');
+
+Route::post('/new', 'App\Http\Controllers\HomeController@createNewCreditEntry');
+Route::get('/payment', 'App\Http\Controllers\HomeController@makeCreditPayment');
